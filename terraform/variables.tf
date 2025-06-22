@@ -58,4 +58,41 @@ variable "environment" {
     condition     = contains(["dev", "staging", "prod"], var.environment)
     error_message = "Environment must be one of: dev, staging, prod."
   }
+}
+
+# Label Studio Configuration
+variable "enable_label_studio" {
+  description = "Whether to deploy Label Studio"
+  type        = bool
+  default     = false
+}
+
+variable "label_studio_admin_password" {
+  description = "The admin password for Label Studio"
+  type        = string
+  sensitive   = true
+  default     = ""
+  
+  validation {
+    condition     = var.enable_label_studio ? length(var.label_studio_admin_password) >= 8 : true
+    error_message = "Label Studio admin password must be at least 8 characters long when Label Studio is enabled."
+  }
+}
+
+variable "label_studio_machine_type" {
+  description = "The machine type for the Label Studio instance"
+  type        = string
+  default     = "e2-standard-4"
+}
+
+variable "label_studio_enable_static_ip" {
+  description = "Whether to assign a static IP to the Label Studio instance"
+  type        = bool
+  default     = false
+}
+
+variable "label_studio_allowed_source_ranges" {
+  description = "List of IP ranges allowed to access Label Studio"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]  # Warning: This allows all IPs - restrict in production
 } 

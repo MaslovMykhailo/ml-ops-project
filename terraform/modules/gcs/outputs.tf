@@ -19,6 +19,12 @@ output "service_account_key" {
   sensitive   = true
 }
 
+output "service_account_key_path" {
+  description = "The path to the service account key file"
+  value       = var.create_service_account_key ? google_service_account_key.dvc_key[0].private_key : null
+  sensitive   = true
+}
+
 output "dvc_remote_config" {
   description = "DVC remote configuration for Google Cloud Storage"
   value = {
