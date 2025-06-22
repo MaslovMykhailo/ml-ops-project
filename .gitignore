@@ -3,3 +3,6 @@ venv
 # DVC
 .dvc/cache/
 .dvc/tmp/
+
+# Data
+sample-dataset/
