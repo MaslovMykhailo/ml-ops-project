@@ -1,3 +1,4 @@
+# Python
 venv
 
 # DVC
@@ -6,3 +7,6 @@ venv
 
 # Data
 sample-dataset/
+
+# Env
+.env
