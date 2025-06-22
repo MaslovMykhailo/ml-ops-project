@@ -22,4 +22,25 @@ output "service_account_key" {
 output "dvc_remote_config" {
   description = "DVC remote configuration for Google Cloud Storage"
   value       = module.dvc_gcs.dvc_remote_config
+}
+
+# Label Studio Outputs
+output "label_studio_url" {
+  description = "The URL of the Label Studio web interface"
+  value       = var.enable_label_studio ? module.label_studio[0].service_url : null
+}
+
+output "label_studio_service_account" {
+  description = "The email of the Label Studio service account"
+  value       = var.enable_label_studio ? module.label_studio[0].service_account_email : null
+}
+
+output "label_studio_database" {
+  description = "The name of the Label Studio database"
+  value       = var.enable_label_studio ? module.label_studio[0].database_name : null
+}
+
+output "label_studio_redis" {
+  description = "The name of the Redis instance for Label Studio"
+  value       = var.enable_label_studio ? module.label_studio[0].redis_instance_name : null
 } 

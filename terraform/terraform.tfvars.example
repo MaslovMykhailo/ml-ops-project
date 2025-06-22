@@ -10,4 +10,11 @@ force_destroy     = false
 lifecycle_age_days = 0  # Set to 0 to disable lifecycle rules, or set to number of days
 
 # Environment Configuration
-environment = "dev"  # Options: dev, staging, prod 
+environment = "dev"  # Options: dev, staging, prod
+
+# Label Studio Configuration
+enable_label_studio = true
+label_studio_db_password = "your-secure-db-password"
+label_studio_admin_password = "your-admin-password"
+label_studio_admin_username = "admin"
+network = "default" 

@@ -58,4 +58,37 @@ variable "environment" {
     condition     = contains(["dev", "staging", "prod"], var.environment)
     error_message = "Environment must be one of: dev, staging, prod."
   }
+}
+
+# Label Studio Configuration
+variable "enable_label_studio" {
+  description = "Whether to deploy Label Studio"
+  type        = bool
+  default     = true
+}
+
+variable "label_studio_db_password" {
+  description = "Password for the Label Studio database user"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "label_studio_admin_password" {
+  description = "Label Studio admin password"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "label_studio_admin_username" {
+  description = "Label Studio admin username"
+  type        = string
+  default     = "admin"
+}
+
+variable "network" {
+  description = "The VPC network for the database"
+  type        = string
+  default     = "default"
 } 
