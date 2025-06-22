@@ -1,0 +1,13 @@
+# Google Cloud Project Configuration
+project_id = "your-gcp-project-id"
+region     = "us-central1"
+zone       = "us-central1-a"
+
+# Google Cloud Storage Bucket Configuration
+bucket_name       = "ml-ops-datasets"
+bucket_location   = "US"
+force_destroy     = false
+lifecycle_age_days = 0  # Set to 0 to disable lifecycle rules, or set to number of days
+
+# Environment Configuration
+environment = "dev"  # Options: dev, staging, prod 

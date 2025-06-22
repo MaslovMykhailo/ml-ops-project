@@ -1,1 +1,19 @@
 venv
+
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+*.tfvars
+!terraform.tfvars.example
+*.tfplan
+crash.log
+crash.*.log
+
+# Service account keys
+*.json
+!terraform/terraform.tfvars.example
+
+# DVC
+.dvc/cache/
+.dvc/tmp/
