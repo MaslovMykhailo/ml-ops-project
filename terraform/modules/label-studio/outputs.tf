@@ -5,6 +5,11 @@ output "service_url" {
   value       = google_cloud_run_service.label_studio.status[0].url
 }
 
+output "label_studio_host" {
+  description = "The full URL for LABEL_STUDIO_HOST environment variable"
+  value       = "https://${google_cloud_run_service.label_studio.status[0].url}"
+}
+
 output "service_account_email" {
   description = "The email of the Label Studio service account"
   value       = google_service_account.label_studio.email

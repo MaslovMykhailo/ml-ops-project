@@ -94,7 +94,7 @@ resource "google_cloud_run_service" "label_studio" {
   template {
     spec {
       containers {
-        image = "heartexlabs/label-studio:latest"
+        image = "heartexlabs/label-studio:1.13.1"
         
         ports {
           container_port = 8080
