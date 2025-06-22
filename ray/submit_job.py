@@ -104,9 +104,6 @@ def main():
     print("🚀 Ray Task Submission for YOLO Training")
     print("=" * 40)
     
-    # Ray cluster address
-    ray_address = "ray://localhost:10001"  # Ray cluster address
-    
     # Check required files
     if not check_required_files():
         return
@@ -134,13 +131,14 @@ def main():
     # Initialize Ray
     try:
         if not ray.is_initialized():
-            ray.init(address=ray_address)
-            print(f"✅ Connected to Ray cluster at {ray_address}")
+            ray.init()
+            print(f"✅ Connected to Ray cluster")
             print("-" * 40)  # Separator after Ray connection logs
     except Exception as e:
-        print(f"❌ Cannot connect to Ray cluster at {ray_address}: {e}")
-        print("   Make sure Ray cluster is running:")
-        print("   ray start --head --dashboard-host=0.0.0.0 --dashboard-port=8265")
+        print(f"❌ Cannot connect to Ray cluster: {e}")
+        print("   Make sure Anyscale cluster is running:")
+        print("   anyscale cluster list")
+        print("   anyscale cluster start <cluster-name>")
         return
     
     try:
@@ -190,9 +188,6 @@ def main():
         
         if success:
             print("🎉 Training completed successfully!")
-            print("🌐 Check results at:")
-            print("   - Ray Dashboard: http://localhost:8265")
-            print("   - W&B Dashboard: https://wandb.ai")
         else:
             print("❌ Training failed")
             
