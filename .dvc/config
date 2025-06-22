@@ -1,0 +1,4 @@
+[core]
+    remote = gcs
+['remote "gcs"']
+    url = gs://ml-ops-datasets-set-university-mykhailo-maslov
