@@ -24,9 +24,13 @@ print_error() {
     echo -e "${RED}[ERROR]${NC} $1"
 }
 
+# Store the terraform directory path (where script is executed from)
+TERRAFORM_DIR=$(pwd)
+
 # Check if we're in the terraform directory
 if [ ! -f "main.tf" ]; then
     print_error "This script must be run from the terraform directory"
+    print_error "Usage: cd terraform && ./scripts/setup-dvc.sh"
     exit 1
 fi
 
@@ -63,6 +67,11 @@ if ! command -v dvc &> /dev/null; then
     exit 1
 fi
 
+# Navigate to project root (parent directory of terraform)
+PROJECT_ROOT=$(dirname "$TERRAFORM_DIR")
+print_status "Navigating to project root: $PROJECT_ROOT"
+cd "$PROJECT_ROOT"
+
 # Check if we're in a DVC repository
 if [ ! -d ".dvc" ]; then
     print_warning "Not in a DVC repository. Initializing DVC..."
@@ -81,32 +90,35 @@ dvc remote default gcs
 
 print_status "DVC remote configured successfully!"
 
-# Create service account key file
-print_status "Creating service account key file..."
-terraform output -raw service_account_key > gcs-key.json
-chmod 600 gcs-key.json
+# Navigate back to terraform directory for key creation
+cd "$TERRAFORM_DIR"
 
-print_status "Service account key saved to gcs-key.json"
+# Create service account key file in scripts directory
+print_status "Creating service account key file..."
+terraform output -raw service_account_key > scripts/gcs-key.json
+chmod 600 scripts/gcs-key.json
+
+print_status "Service account key saved to scripts/gcs-key.json"
 
 # Set up environment variables
 print_status "Setting up environment variables..."
 
 # Create a script to set environment variables
-cat > setup-env.sh << EOF
+cat > scripts/setup-env.sh << EOF
 #!/bin/bash
 # Environment setup script for DVC with GCS
-export GOOGLE_APPLICATION_CREDENTIALS="\$(pwd)/gcs-key.json"
+export GOOGLE_APPLICATION_CREDENTIALS="\$(pwd)/scripts/gcs-key.json"
 export GOOGLE_SERVICE_ACCOUNT_EMAIL="$SERVICE_ACCOUNT_EMAIL"
 echo "Environment variables set for DVC GCS integration"
 EOF
 
-chmod +x setup-env.sh
+chmod +x scripts/setup-env.sh
 
-print_status "Environment setup script created: setup-env.sh"
+print_status "Environment setup script created: scripts/setup-env.sh"
 
 # Test the configuration
 print_status "Testing DVC configuration..."
-if source setup-env.sh && dvc remote list | grep -q "gcs"; then
+if source scripts/setup-env.sh && dvc remote list | grep -q "gcs"; then
     print_status "DVC configuration test successful!"
 else
     print_error "DVC configuration test failed. Please check your setup."
@@ -114,7 +126,7 @@ else
 fi
 
 # Create a test script
-cat > test-dvc.sh << 'EOF'
+cat > scripts/test-dvc.sh << 'EOF'
 #!/bin/bash
 # Test script for DVC GCS integration
 
@@ -123,7 +135,7 @@ set -e
 echo "Testing DVC GCS integration..."
 
 # Source environment variables
-source setup-env.sh
+source scripts/setup-env.sh
 
 # Test remote configuration
 echo "DVC remotes:"
@@ -140,9 +152,9 @@ fi
 echo "DVC GCS integration test completed!"
 EOF
 
-chmod +x test-dvc.sh
+chmod +x scripts/test-dvc.sh
 
-print_status "Test script created: test-dvc.sh"
+print_status "Test script created: scripts/test-dvc.sh"
 
 # Print next steps
 echo ""
@@ -150,18 +162,18 @@ print_status "Setup completed successfully!"
 echo ""
 echo "Next steps:"
 echo "1. Source the environment variables:"
-echo "   source setup-env.sh"
+echo "   source scripts/setup-env.sh"
 echo ""
 echo "2. Test the configuration:"
-echo "   ./test-dvc.sh"
+echo "   ./scripts/test-dvc.sh"
 echo ""
-echo "3. Add your datasets to DVC:"
-echo "   dvc add data/dataset"
+echo "3. Add your datasets to DVC (from project root):"
+echo "   cd .. && dvc add data/dataset"
 echo ""
-echo "4. Push to GCS:"
-echo "   dvc push"
+echo "4. Push to GCS (from project root):"
+echo "   cd .. && dvc push"
 echo ""
 echo "5. For CI/CD, use the service account key:"
-echo "   export GOOGLE_APPLICATION_CREDENTIALS=\"\$(pwd)/gcs-key.json\""
+echo "   export GOOGLE_APPLICATION_CREDENTIALS=\"\$(pwd)/scripts/gcs-key.json\""
 echo ""
-print_warning "Remember to add gcs-key.json to your .gitignore file!" 
+print_warning "Remember to add scripts/gcs-key.json to your .gitignore file!" 

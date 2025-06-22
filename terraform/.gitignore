@@ -39,4 +39,9 @@ terraform.rc
 !terraform.tfvars.example
 
 # Ignore logs
-*.log 
+*.log
+
+# Terraform scripts - ignore generated files but keep source scripts
+scripts/gcs-key.json
+scripts/setup-env.sh
+scripts/test-dvc.sh 
