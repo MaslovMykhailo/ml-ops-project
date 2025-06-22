@@ -11,10 +11,3 @@ lifecycle_age_days = 0  # Set to 0 to disable lifecycle rules, or set to number 
 
 # Environment Configuration
 environment = "dev"  # Options: dev, staging, prod 
-
-# Label Studio Configuration
-enable_label_studio = false  # Set to true to deploy Label Studio
-label_studio_admin_password = "your-secure-password-here"  # Required if enable_label_studio = true
-label_studio_machine_type = "e2-standard-4"
-label_studio_enable_static_ip = false
-label_studio_allowed_source_ranges = ["0.0.0.0/0"]  # Restrict to your IP range in production 
