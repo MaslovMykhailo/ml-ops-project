@@ -18,7 +18,7 @@ if not api_key:
     raise ValueError("DETECT_API_KEY environment variable is not set. Please create a .env file with DETECT_API_KEY=your_api_key")
 
 # Test image URL (receipt image for testing)
-image_url = "https://pandapaperroll.com/wp-content/uploads/2020/05/Receipt-paper-types-1.jpg"
+image_url = "https://miro.medium.com/v2/resize:fit:2000/1*XABefyicvTbpAARnM33BLA.jpeg"
 
 # Download and decode the image
 resp = requests.get(image_url)
@@ -36,10 +36,10 @@ for item in detections:
     coords = item["coordinates"]
 
     # Draw rectangle around detected object
-    cv2.rectangle(image, (int(coords[0]), int(coords[1])), (int(coords[2]), int(coords[3])), (0, 0, 0), 2)
+    cv2.rectangle(image, (int(coords[0]), int(coords[1])), (int(coords[2]), int(coords[3])), (0, 0, 255), 2)
 
     # Add class label above the bounding box
-    cv2.putText(image, class_name, (int(coords[0]), int(coords[1] - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0), 2)
+    cv2.putText(image, class_name, (int(coords[0]), int(coords[1] - 5)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
 # Save the annotated image
 cv2.imwrite("output.jpeg", image)
