@@ -110,9 +110,12 @@ def main():
         
         # Train model with built-in W&B integration
         model, results = train_model(config)
+
+        wandb_entity = os.getenv('WANDB_ENTITY')
+        wandb_project = os.getenv('WANDB_PROJECT')
         
         print("✅ Training completed successfully!")
-        print(f"🌐 Check your W&B dashboard at: https://wandb.ai/{config['wandb_entity']}/{config['wandb_project']}")
+        print(f"🌐 Check your W&B dashboard at: https://wandb.ai/{wandb_entity}/{wandb_project}")
         
     except Exception as e:
         print(f"❌ Error during training: {str(e)}")
