@@ -31,7 +31,8 @@ jobs:
               run: |
                 cd ray-train
                 anyscale job submit \
-                --wait \
+                --compute-config ray-train \
                 --requirements requirements.txt \
                 --working-dir .  \
+                --wait \
                 -- python train_yolo.py

@@ -26,7 +26,7 @@ image_nparray = np.asarray(bytearray(resp.content), dtype=np.uint8)
 image = cv2.imdecode(image_nparray, cv2.IMREAD_COLOR)
 
 # Send request to the object detection server
-resp = requests.get(f"{server_url}?image_url={image_url}", headers={"Authorization": api_key})
+resp = requests.get(f"{server_url}detect?image_url={image_url}", headers={"Authorization": api_key})
 
 detections = resp.json()["objects"]
 
