@@ -39,13 +39,64 @@ jobs:
                   pip install -r requirements.txt
 
             - name: Deploy on Ray Cluster
+              id: deploy
               run: |
                 cd ray-deploy
-                anyscale service deploy object_detection:entrypoint \
+                DEPLOY_OUTPUT=$(anyscale service deploy object_detection:entrypoint \
                 --name=${{ inputs.deployment_name }} \
                 --env=WANDB_MODEL_ARTIFACT=${{ inputs.model_artifact }} \
                 --env=WANDB_API_KEY=${{ secrets.WANDB_API_KEY }} \
                 --env=WANDB_PROJECT=${{ secrets.WANDB_PROJECT }} \
                 --env=WANDB_ENTITY=${{ secrets.WANDB_ENTITY }} \
                 --requirements requirements.txt \
-                --working-dir .
+                --working-dir . 2>&1)
+                
+                # Extract UI URL from output
+                UI_URL=$(echo "$DEPLOY_OUTPUT" | grep -o 'https://console\.anyscale\.com/services/[^[:space:]]*')
+                if [ ! -z "$UI_URL" ]; then
+                  echo "ui_url<<EOF" >> $GITHUB_OUTPUT
+                  echo "$UI_URL" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+                fi
+                
+                # Extract curl command from output
+                CURL_CMD=$(echo "$DEPLOY_OUTPUT" | grep -o 'curl -H "Authorization: Bearer [^"]*" https://[^[:space:]]*')
+                if [ ! -z "$CURL_CMD" ]; then
+                  echo "curl_command<<EOF" >> $GITHUB_OUTPUT
+                  echo "$CURL_CMD" >> $GITHUB_OUTPUT
+                  echo "EOF" >> $GITHUB_OUTPUT
+                fi
+
+            - name: Wait for deployment to be ready
+              run: |
+                anyscale service wait --name=${{ inputs.deployment_name }}
+
+            - name: Display Deployment Results
+              run: |
+                echo "## 🚀 Deployment Successful!" >> $GITHUB_STEP_SUMMARY
+                echo "" >> $GITHUB_STEP_SUMMARY
+                
+                if [ ! -z "${{ steps.deploy.outputs.ui_url }}" ]; then
+                  echo "### 🔗 View Service in Anyscale Console:" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "[Open Service Dashboard](${{ steps.deploy.outputs.ui_url }})" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                fi
+                
+                if [ ! -z "${{ steps.deploy.outputs.curl_command }}" ]; then
+                  echo "### 🔑 API Access (Authorization Token + Service URL):" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "Use this curl command to test your deployed service:" >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo '```bash' >> $GITHUB_STEP_SUMMARY
+                  echo "${{ steps.deploy.outputs.curl_command }}" >> $GITHUB_STEP_SUMMARY
+                  echo '```' >> $GITHUB_STEP_SUMMARY
+                  echo "" >> $GITHUB_STEP_SUMMARY
+                  echo "**Note:** Add the appropriate path to the URL based on your service endpoints." >> $GITHUB_STEP_SUMMARY
+                fi
+                
+                echo "" >> $GITHUB_STEP_SUMMARY
+                echo "### 📋 Next Steps:" >> $GITHUB_STEP_SUMMARY
+                echo "- Your service is now deployed and ready to receive requests" >> $GITHUB_STEP_SUMMARY
+                echo "- Use the curl command above to test the deployment" >> $GITHUB_STEP_SUMMARY
+                echo "- Monitor your service logs in the Anyscale dashboard" >> $GITHUB_STEP_SUMMARY
