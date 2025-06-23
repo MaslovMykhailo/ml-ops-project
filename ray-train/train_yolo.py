@@ -8,7 +8,6 @@ Uses built-in YOLO W&B integration
 import os
 import yaml
 import wandb
-from pathlib import Path
 from dotenv import load_dotenv
 from ultralytics import YOLO
 import torch

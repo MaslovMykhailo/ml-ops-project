@@ -1,0 +1,9 @@
+ultralytics
+wandb
+python-dotenv
+opencv-contrib-python-headless
+matplotlib
+seaborn
+scikit-learn
+torch
+torchvision
