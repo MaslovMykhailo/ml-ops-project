@@ -1,0 +1,51 @@
+name: Deploy on Ray Cluster
+
+on:
+  workflow_dispatch:
+    inputs:
+        model_artifact:
+            description: 'Model artifact'
+            required: true
+            default: 'maslov-mykhailo-set-university-org/wandb-registry-model/MLOpsProjectCollection:v0'
+            type: string
+        deployment_name:
+            description: 'Deployment name'
+            required: true
+            default: 'yolo-deployment'
+            type: string
+  pull_request:
+    branches: [ main ]
+
+jobs: 
+    train-deploy:
+        runs-on: ubuntu-latest
+        env:
+            ANYSCALE_CLI_TOKEN: ${{ secrets.ANYSCALE_CLI_TOKEN }}
+            WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+            WANDB_PROJECT: ${{ secrets.WANDB_PROJECT }}
+            WANDB_ENTITY: ${{ secrets.WANDB_ENTITY }}
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                python-version: '3.10.17'
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install -r requirements.txt
+
+            - name: Deploy on Ray Cluster
+              run: |
+                cd ray-deploy
+                anyscale service deploy object_detection:entrypoint \
+                --name=${{ inputs.deployment_name }} \
+                --env=WANDB_MODEL_ARTIFACT=${{ inputs.model_artifact }} \
+                --env=WANDB_API_KEY=${{ secrets.WANDB_API_KEY }} \
+                --env=WANDB_PROJECT=${{ secrets.WANDB_PROJECT }} \
+                --env=WANDB_ENTITY=${{ secrets.WANDB_ENTITY }} \
+                --requirements requirements.txt \
+                --working-dir .

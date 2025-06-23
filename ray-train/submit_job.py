@@ -190,7 +190,7 @@ def main():
         # Wait for completion
         print("👀 Waiting for task completion...")
         success = ray.get(task)
-        
+
         if success:
             print("🎉 Training completed successfully!")
         else:

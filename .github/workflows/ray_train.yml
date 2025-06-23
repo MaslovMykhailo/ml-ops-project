@@ -1,4 +1,4 @@
-name: Train and Deploy on Ray Cluster
+name: Train on Ray Cluster
 
 on:
   workflow_dispatch:
@@ -30,4 +30,8 @@ jobs:
             - name: Train on Ray Cluster
               run: |
                 cd ray-train
-                anyscale job submit --wait --working-dir . -- python submit_job.py
+                anyscale job submit \
+                --wait \
+                --requirements requirements.txt \
+                --working-dir .  \
+                -- python train_yolo.py

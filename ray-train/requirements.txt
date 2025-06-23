@@ -2,7 +2,7 @@ ultralytics
 wandb
 torch
 torchvision
-opencv-python
+opencv-contrib-python-headless
 Pillow
 numpy
 matplotlib

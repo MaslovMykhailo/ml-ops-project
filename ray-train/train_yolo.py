@@ -111,12 +111,8 @@ def main():
         # Train model with built-in W&B integration
         model, results = train_model(config)
         
-        # Get final run name (may be overridden by environment)
-        final_run_name = os.getenv('WANDB_RUN_NAME', config['run_name'])
-        
         print("✅ Training completed successfully!")
-        print(f"📁 Results saved in: {config['wandb_project']}/{final_run_name}/")
-        print(f"🌐 Check your W&B dashboard at: https://wandb.ai")
+        print(f"🌐 Check your W&B dashboard at: https://wandb.ai/{config['wandb_entity']}/{config['wandb_project']}")
         
     except Exception as e:
         print(f"❌ Error during training: {str(e)}")
