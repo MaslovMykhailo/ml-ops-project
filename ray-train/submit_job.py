@@ -89,8 +89,13 @@ def run_ray_job(file_contents):
     
     # Run ray_job.py
     try:
-        result = subprocess.run([sys.executable, "ray_job.py"], 
-                              capture_output=True, text=True, check=True)
+        result = subprocess.run(
+            [sys.executable, "ray_job.py"], 
+            capture_output=True, 
+            text=True, 
+            check=True,
+            env=os.environ
+        )
         print(result.stdout)
         return True
     except subprocess.CalledProcessError as e:
